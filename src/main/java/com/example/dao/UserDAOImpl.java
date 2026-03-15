@@ -3,11 +3,18 @@ package com.example.dao;
 import com.example.config.HibernateUtil;
 import com.example.entity.User;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
+
+    private final SessionFactory sessionFactory;
+
+    public UserDAOImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public void create(User user) {

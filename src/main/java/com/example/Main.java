@@ -1,15 +1,16 @@
 package com.example;
 
-import com.example.dao.UserDAO;
+import com.example.config.HibernateUtil;
 import com.example.dao.UserDAOImpl;
 import com.example.entity.User;
+import com.example.service.UserService;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    private static final UserDAO userDAO = new UserDAOImpl();
+    private static final UserService userService = new UserService(new UserDAOImpl(HibernateUtil.getSessionFactory()));
     public static void main(String[] args) {
 
         try (Scanner scanner = new Scanner(System.in)) {
@@ -40,7 +41,7 @@ public class Main {
 
                         User user = new User(name, email, age);
 
-                        userDAO.create(user);
+                        userService.createUser(user);
 
                         break;
 
@@ -49,13 +50,13 @@ public class Main {
                         System.out.print("User id: ");
                         Long id = scanner.nextLong();
 
-                        System.out.println(userDAO.getById(id));
+                        System.out.println(userService.getUser(id));
 
                         break;
 
                     case 3:
 
-                        List<User> users = userDAO.getAll();
+                        List<User> users = userService.getAllUsers();
 
                         users.forEach(System.out::println);
 
@@ -67,14 +68,14 @@ public class Main {
                         Long uid = scanner.nextLong();
                         scanner.nextLine();
 
-                        User u = userDAO.getById(uid);
+                        User u = userService.getUser(uid);
 
                         if(u != null){
 
                             System.out.print("New name: ");
                             u.setName(scanner.nextLine());
 
-                            userDAO.update(u);
+                            userService.updateUser(u);
 
                         }
 
@@ -85,7 +86,7 @@ public class Main {
                         System.out.print("User id: ");
                         Long did = scanner.nextLong();
 
-                        userDAO.delete(did);
+                        userService.deleteUser(did);
 
                         break;
 
