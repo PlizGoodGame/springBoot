@@ -1,20 +1,12 @@
-package com.example.entity;
+package com.example.dto;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
+    
     private Long id;
-
     private String name;
     private String email;
     private Integer age;
-    private LocalDateTime createdAt;
+    private java.time.LocalDateTime createdAt;
 
     // Getters and Setters
     public Long getId() {
@@ -49,11 +41,11 @@ public class User {
         this.age = age;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public java.time.LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(java.time.LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

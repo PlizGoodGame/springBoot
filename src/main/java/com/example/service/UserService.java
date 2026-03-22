@@ -1,35 +1,62 @@
 package com.example.service;
 
-import com.example.dao.UserDAO;
+import com.example.dto.UserDTO;
 import com.example.entity.User;
+import com.example.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class UserService {
 
-    private final UserDAO userDAO;
+    private final UserRepository repository;
 
-    public UserService(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public UserService(UserRepository repository) {
+        this.repository = repository;
     }
 
-    public void createUser(User user) {
-        userDAO.create(user);
+    public UserDTO create(UserDTO dto) {
+        User user = mapToEntity(dto);
+        user.setCreatedAt(LocalDateTime.now());
+        return mapToDTO(repository.save(user));
     }
 
-    public User getUser(Long id) {
-        return userDAO.getById(id);
+    public List<UserDTO> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
-    public List<User> getAllUsers() {
-        return userDAO.getAll();
+    public UserDTO getById(Long id) {
+        return repository.findById(id)
+                .map(this::mapToDTO)
+                .orElseThrow();
     }
 
-    public void updateUser(User user) {
-        userDAO.update(user);
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
-    public void deleteUser(Long id) {
-        userDAO.delete(id);
+    private UserDTO mapToDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setAge(user.getAge());
+        dto.setCreatedAt(user.getCreatedAt());
+        return dto;
+    }
+
+    private User mapToEntity(UserDTO dto) {
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setAge(dto.getAge());
+        user.setCreatedAt(dto.getCreatedAt());
+        return user;
     }
 }
