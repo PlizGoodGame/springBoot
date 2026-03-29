@@ -2,6 +2,8 @@ package com.example.service;
 
 import com.example.dto.UserDTO;
 import com.example.entity.User;
+import com.example.event.UserEvent;
+import com.example.kafka.KafkaProducerService;
 import com.example.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -13,15 +15,17 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository repository;
+    private final KafkaProducerService kafkaProducer;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, KafkaProducerService kafkaProducer) {
         this.repository = repository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public UserDTO create(UserDTO dto) {
-        User user = mapToEntity(dto);
-        user.setCreatedAt(LocalDateTime.now());
-        return mapToDTO(repository.save(user));
+        User user = repository.save(mapToEntity(dto));
+        kafkaProducer.send(new UserEvent(user.getEmail(), "CREATED"));
+        return mapToDTO(user);
     }
 
     public List<UserDTO> getAll() {
@@ -38,7 +42,9 @@ public class UserService {
     }
 
     public void delete(Long id) {
+        User user = repository.findById(id).orElseThrow();
         repository.deleteById(id);
+        kafkaProducer.send(new UserEvent(user.getEmail(), "DELETED"));
     }
 
     private UserDTO mapToDTO(User user) {
