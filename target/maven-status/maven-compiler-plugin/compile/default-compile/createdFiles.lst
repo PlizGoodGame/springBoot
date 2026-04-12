@@ -1,8 +1,0 @@
-com\example\entity\User.class
-com\example\repository\UserRepository.class
-com\example\Main.class
-com\example\event\UserEvent.class
-com\example\service\UserService.class
-com\example\kafka\KafkaProducerService.class
-com\example\controller\UserController.class
-com\example\dto\UserDTO.class
